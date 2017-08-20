@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 readonly usage="\
@@ -12,15 +12,18 @@ Examples:
 	$0 boot
 	$0 rpm
 	$0 slpi
+	$0 adsp
 	$0 android
-	$0 all
+	$0 non-hlos
 	$0 meta
+	$0 all
 "
 
 readonly MODEM_COMPILE_PATH="modem_proc/build/ms"
 readonly BOOT_COMPILE_PATH="boot_images/QcomPkg/Msm8998Pkg"
 readonly RPM_COMPILE_PATH="rpm_proc/build"
 readonly SLPI_COMPILE_PATH="slpi_proc"
+readonly ADSP_COMPILE_PATH="adsp_proc"
 readonly ANDROID_COMPILE_PATH="LINUX/android"
 readonly META_COMPILE_PATH="common/build"
 
@@ -82,6 +85,17 @@ function build_slpi()
 	echo "build slpi::----------"
 }
 
+# 编译adsp
+function build_adsp()
+{
+	echo "build adsp::++++++++++"
+	
+	cd ${TOP_DIR}/${ADSP_COMPILE_PATH}
+	python ./build/build.py -c msm8998 -o all
+
+	echo "build adsp::----------"
+}
+
 # 编译android
 function build_android()
 {
@@ -92,6 +106,8 @@ function build_android()
 
 	echo "build android::----------"
 }
+
+# 编译non-hlos
 
 
 # 编译meta
@@ -105,15 +121,26 @@ function build_meta()
 	echo "build meta::----------"
 }
 
-# 编译all
-function build_all()
+# 编译non-hlos
+function build_non-hlos()
 {
-	echo "build android::++++++++++"
+	echo "build non-hlos::++++++++++"
 	
 	build_modem
 	build_boot
 	build_rpm
 	build_slpi
+	build_adsp
+
+	echo "build non-hlos::----------"
+}
+
+# 编译all
+function build_all()
+{
+	echo "build android::++++++++++"
+	
+	build_non-hlos
 	build_android
 	build_meta
 	
@@ -154,14 +181,20 @@ do
 	slpi)
 		build_slpi
 		;;
+	adsp)
+		build_adsp
+		;;
 	android)
 		build_android
 		;;
-	all)
-		build_all
+	non-hlos)
+		build_non-hlos
 		;;
 	meta)
 		build_meta
+		;;
+	all)
+		build_all
 		;;
 	*)
 		echo "wrong target: $i"
