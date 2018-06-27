@@ -3,11 +3,16 @@
 #include "../lib/ICallback.h"
 #include "../lib/Callback.h"
 
-
+// ----------------- Declaration Debug Zone ----------------
+#define		LOG_NDEBUG 				1
+#define		LOG_TAG 				"NativeService"
+#include	<cutils/log.h>
 
 // 实现client   
 int main() {
 	char buf[128];			// 128*1024
+
+	ALOGI("Native Client::+++++++++++++++\r\n");
 	
 	// 获取service manager 引用
 	sp <IServiceManager> sm = defaultServiceManager();
@@ -16,10 +21,13 @@ int main() {
 	// 转为sp <IDepthSensorService>
 	sp <INativeService> cs = interface_cast <INativeService> (binder);
 
-	sp<Callback> c = new Callback();
 	ProcessState::self()->startThreadPool();
+	
+	sp<Callback> c = new Callback();
 	int a = cs->setCallback(c);  
 
+	sp<Callback> c2 = new Callback();
+	a = cs->setCallback(c2);  
 	
 	// 通过binder 引用调用add 方法
 	cs->add(5,8);
@@ -32,13 +40,21 @@ int main() {
 	}
 	cs->postRawData(buf,sizeof(buf));
 
-	// 通过binder 引用调用startCallback  方法
-	cs->startCallback();
 
 	cs->setVersion(String8("3.0"));
 	
 	cs->getVersion();
+
+
+	// 通过binder 引用调用startCallback  方法
+	//cs->startCallback();
+
 	
+	do{
+		sleep(20);
+		ALOGI("wait...\r\n");
+	}while(1);
+
 	return 0;
 }
 

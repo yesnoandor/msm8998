@@ -1,5 +1,6 @@
 #include 	"../include/common.h"
 #include	"NativeService.h"
+#include	"UsbHid.h"
 
 #include	"depthEvaluate.h"
 
@@ -15,40 +16,40 @@ namespace android {
 	NativeService::NativeService() :
 		BnNativeService()
 	{
-		ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
-		printf("%s::+++++++++++++++\r\n",__FUNCTION__);
-
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
+		
 		mDepthSensor = new DepthSensor();
 		//mDepthSensor->start();
+
+		// 
+		mUsbHid = new UsbHid(this);
 		
-		printf("%s::---------------\r\n",__FUNCTION__);
-		ALOGI("%s::---------------\r\n",__FUNCTION__);
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 	}
 	
 	NativeService::~NativeService()
 	{
-		printf("%s::+++++++++++++++\r\n",__FUNCTION__);
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
 
-		printf("%s::---------------\r\n",__FUNCTION__);
-
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 	}
 
 	void NativeService::instantiate() {
-		printf("%s::+++++++++++++++\r\n",__FUNCTION__);
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
 		
 		defaultServiceManager()->addService(
 		String16("service.native"), new NativeService);
 
-		printf("%s::---------------\r\n",__FUNCTION__);
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 	}
 
 	int NativeService::add(int a, int b) {
-		printf("%s::+++++++++++++++\r\n",__FUNCTION__);
-
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
+		
 		printf("a = %d\r\n",a);
 		printf("b = %d\r\n",b);
 				
-		printf("%s::---------------\r\n",__FUNCTION__);
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 
 		return (a+b);
 	}
@@ -57,9 +58,9 @@ namespace android {
 	int NativeService::postRawData(char * buf,int len){
 		char * item;
 		
-		printf("%s::+++++++++++++++\r\n",__FUNCTION__);
-
-		printf("len = %d\r\n",len);
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
+		
+		ALOGI("len = %d\r\n",len);
 				
 		for(int i=0;i<16;i++)
 		{
@@ -77,18 +78,18 @@ namespace android {
 
 		mDepthSensor->push_back(item);
 		
-		printf("%s::---------------\r\n",__FUNCTION__);
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 
 		return 0;
 	}
 
 
 	int NativeService::setCallback(const sp<ICallback>& callback){
-		printf("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
 
-		mCallback = callback;
+		mCallback.push_back(callback);
 
-		printf("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 
 		return 0;
 	}
@@ -97,45 +98,47 @@ namespace android {
 		int i;
 		uint8_t buf[128];
 		
-		printf("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
 		
-		printf("start callback test...\r\n");
-
-		sp<ICallback> c = mCallback;
-
+		//sp<ICallback> c = mCallback;
+		sp<ICallback> c;
+		
 		for(int i=0;i<sizeof(buf);i++)
 		{
 			buf[i] = 3*i + 2;
 		}
-    	c->notifyCallback(buf,sizeof(buf));  
 
-		printf("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
+		ALOGI("mCallback size = %d\r\n",mCallback.size());
+
+		for(i=0;i<mCallback.size();i++)
+		{
+			c = mCallback[i];
+			c->notifyCallback(buf,sizeof(buf));
+		}
+		
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 	}
 
 	string NativeService::getVersion(){
 		string version = "1.0";
 		
-		printf("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
 		
-
-		printf("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
-
 		version = string(mVersion);
+		
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
+
 		return version;
 	}
 
 	void NativeService::setVersion(String8 version){
-		ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
-		printf("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
+		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
 
-		printf("version = %s\r\n",version.string());
 		ALOGI("version = %s\r\n",version.string());
 		
 		mVersion = version;
 	
-		printf("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
-		ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
-
+		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 	}
 }
 

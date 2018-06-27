@@ -7,6 +7,7 @@
 
 #include "INativeService.h"
 #include "DepthSensor.h"
+#include "UsbHid.h"
 
 namespace android {
 
@@ -43,14 +44,17 @@ class NativeService : public BnNativeService
 		virtual string getVersion();
 		virtual void setVersion(String8 version);
 
-	private:
+	public:
 		NativeService();
-		sp<ICallback> mCallback;
+		//sp<ICallback> mCallback;
+		vector<sp<ICallback>> mCallback;
 
 		//std::list<depth_frame_t *> dataQueue;
 
 		DepthSensor * mDepthSensor;
 		String8 mVersion;
+		
+		sp<UsbHid> mUsbHid;
     
 	public:
     	virtual ~NativeService();

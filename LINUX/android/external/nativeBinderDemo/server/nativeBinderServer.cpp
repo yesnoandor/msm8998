@@ -2,10 +2,14 @@
 #include "../lib/INativeService.h"
 #include "../lib/NativeService.h"
 
+// ----------------- Declaration Debug Zone ----------------
+#define		LOG_NDEBUG 				1
+#define		LOG_TAG 				"NativeService"
+#include	<cutils/log.h>
 
 // 实现server  端
 int main() {
-	ALOGI("Depth Sensor Server::+++++++++++++++\r\n");
+	ALOGI("Native Server::+++++++++++++++\r\n");
 
 	// 初始化单例
 	sp <ProcessState> proc(ProcessState::self());

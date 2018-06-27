@@ -1,22 +1,26 @@
 #include "../include/common.h"
 #include "INativeService.h"
 
+// ----------------- Declaration Debug Zone ----------------
+#define		LOG_NDEBUG 				1
+#define		LOG_TAG 				"ICallback"
+#include	<cutils/log.h>
 
 namespace android{  
 	//-------------------------------------------
 	// 实现ICallback   接口中引用类的各个方法
 	// BpCallback 的构造函数
 	BpCallback::BpCallback(const sp<IBinder>& impl) :BpInterface<ICallback>(impl) {
-		printf("ICallback:::%s::+++++++++++++++\r\n",__FUNCTION__);
+		ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
 
-		printf("ICallback:::%s::---------------\r\n",__FUNCTION__);
+		ALOGI("ICallback:::%s::---------------\r\n",__FUNCTION__);
 	}
 
 	// BpCallback 的notifyCallback	方法的实现
 	// 并没有实现notifyCallback 的功能
 	// 而是跨进程调用Binder  实体对象BnInterface的notifyCallback 方法)
 	int BpCallback::notifyCallback(uint8_t *buf,int len) {
-		printf("%s::+++++++++++++++\r\n",__FUNCTION__);
+		ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
 
 		//Parcel data,reply;
 
@@ -30,7 +34,7 @@ namespace android{
 		data.write(buf, len);
 		remote()->transact(NOTIFY_CALLBACK_TRANSACTION,data,&reply);
 
-		printf("%s::---------------\r\n",__FUNCTION__);
+		ALOGI("%s::---------------\r\n",__FUNCTION__);
 				
 		return reply.readInt32();
 	}
@@ -47,9 +51,9 @@ namespace android{
 										Parcel* reply, 
 										uint32_t flags){
 
-		printf("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
+		ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
 
-		printf("code = %d\r\n",code);
+		ALOGI("code = %d\r\n",code);
 
 		switch (code) {
 			case NOTIFY_CALLBACK_TRANSACTION:{
@@ -78,7 +82,7 @@ namespace android{
 			}
 		}
 		
-		printf("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
+		ALOGI("%s::---------------\r\n",__FUNCTION__);
 	}  
 }  
 

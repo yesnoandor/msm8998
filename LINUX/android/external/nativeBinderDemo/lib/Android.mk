@@ -16,6 +16,8 @@ LOCAL_SRC_FILES:= \
 	depthEvaluate.cpp \
 	ProcessThread.cpp \
 	DepthSensor.cpp \
+	NdkThread.cpp \
+	UsbHid.cpp \
 
 LOCAL_MODULE_TAGS := optional
 
