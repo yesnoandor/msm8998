@@ -3,6 +3,7 @@
 #include	"INativeService.h"
 #include	"NativeService.h"
 #include	"NdkThread.h"
+#include	"NdkTxThread.h"
 
 #include	"UsbHid.h"
 
@@ -34,9 +35,14 @@ UsbHid::UsbHid(sp<NativeService> service,string name)
 	m_hid_name = name;
 	mNativeService = service;
 
+	UsbHid::open_device();
+	
 	//mNativeService->mCallback;
 	mNdkThread = new NdkThread(this);
 	mNdkThread->start();
+
+	mNdkTxThread = new NdkTxThread(this);
+	mNdkTxThread->start();
 
 	ALOGI("%s::---------------\r\n",__FUNCTION__);
 }
@@ -162,6 +168,41 @@ uint32_t UsbHid::read_hid_report(uint8_t* data, uint32_t len)
 	ALOGI("%s::---------------\r\n",__FUNCTION__);
 
 	return	(size);
+}
+
+
+void UsbHid::push_back(msg_t * item)
+{
+	ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
+
+	mNdkTxQueue.push_back(item);
+	mNdkTxThread->notify();
+
+	ALOGI("%s::---------------\r\n",__FUNCTION__);
+}
+
+msg_t * UsbHid::pop_front()
+{
+	msg_t * item;
+	
+	ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
+	
+	item = mNdkTxQueue.front();
+	mNdkTxQueue.pop_front();
+
+	ALOGI("%s::---------------\r\n",__FUNCTION__);
+
+	return item;
+}
+
+
+bool UsbHid::empty()
+{
+	ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
+
+	ALOGI("%s::---------------\r\n",__FUNCTION__);
+
+	return mNdkTxQueue.empty();
 }
 
 }

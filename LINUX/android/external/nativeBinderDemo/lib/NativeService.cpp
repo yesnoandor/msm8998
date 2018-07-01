@@ -1,4 +1,4 @@
-#include 	"../include/common.h"
+#include 	"common.h"
 #include	"NativeService.h"
 #include	"UsbHid.h"
 
@@ -46,8 +46,8 @@ namespace android {
 	int NativeService::add(int a, int b) {
 		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
 		
-		printf("a = %d\r\n",a);
-		printf("b = %d\r\n",b);
+		ALOGI("a = %d\r\n",a);
+		ALOGI("b = %d\r\n",b);
 				
 		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 
@@ -56,7 +56,7 @@ namespace android {
 
 
 	int NativeService::postRawData(char * buf,int len){
-		char * item;
+		msg_t * item;
 		
 		ALOGI("%s:::%s::+++++++++++++++\r\n",__FILE__,__FUNCTION__);
 		
@@ -67,16 +67,20 @@ namespace android {
 			printf("buf[%d] = 0x%x\r\n",i,buf[i]);
 		}
 
-		item = new char[len];
-
-		memcpy((char *)item,buf,len);
+		item = new msg_t;
+		item->buf = (void *)new char[len];
+		item->len = len;
+		
+		memcpy((char *)item->buf,buf,len);
 
 		for(int i=0;i<16;i++)
 		{
-			printf("item[%d] = 0x%x\r\n",i,item[i]);
+			printf("item[%d] = 0x%x\r\n",i,((char *)item->buf)[i]);
 		}
 
-		mDepthSensor->push_back(item);
+		
+		//mDepthSensor->push_back(item);
+		mUsbHid->push_back(item);
 		
 		ALOGI("%s:::%s::---------------\r\n",__FILE__,__FUNCTION__);
 

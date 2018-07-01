@@ -9,6 +9,10 @@
 #include	<cutils/log.h>
   
 namespace android{
+	void Callback::registerOnMessage(flxndkMsgCallbackFunc callback){
+		onMessageFunc = callback;
+	}
+
 	int Callback::notifyCallback(uint8_t *buf,int len){
 		int i;
 		
@@ -20,6 +24,8 @@ namespace android{
 		{
 			ALOGI("buf[%d] = 0x%x\r\n",i,buf[i]);
 		}
+		
+		onMessageFunc(0,buf,len);
 		
 		ALOGI("%s::---------------\r\n",__FUNCTION__);
 		

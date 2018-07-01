@@ -8,6 +8,10 @@ LOCAL_SHARED_LIBRARIES := \
 	libbinder
 
 LOCAL_MODULE := libINativeBinder
+
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/../include \
+
 LOCAL_SRC_FILES:= \
 	NativeService.cpp \
 	INativeService.cpp \
@@ -17,6 +21,7 @@ LOCAL_SRC_FILES:= \
 	ProcessThread.cpp \
 	DepthSensor.cpp \
 	NdkThread.cpp \
+	NdkTxThread.cpp \
 	UsbHid.cpp \
 
 LOCAL_MODULE_TAGS := optional

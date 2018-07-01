@@ -41,7 +41,7 @@ bool NdkThread::threadLoop() {
 	
     ALOGI("%s::+++++++++++++++\r\n",__FUNCTION__);
 
-	mUsbHid->open_device();
+	//mUsbHid->open_device();
 	
 	while(!exitPending()){
 
@@ -90,6 +90,7 @@ bool NdkThread::threadLoop() {
 							ALOGI("buf[%d] = 0x%x\r\n",i,buf[i]);
 						}
 
+						ALOGI("mCallback size = %d\r\n",mUsbHid->mNativeService->mCallback.size());
 
 						for(i=0;i<mUsbHid->mNativeService->mCallback.size();i++)
 						{

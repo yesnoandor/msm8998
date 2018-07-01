@@ -16,10 +16,17 @@ namespace android {
 
 
 class NdkThread;
+class NdkTxThread;
 class NativeService;
 
 using namespace std;
 
+typedef struct msg_t
+{
+    int id;
+    void * buf;
+    int len;
+}msg_t;
 
 static const string USB_HID_DEVICE_NAME =	"/dev/hidg0";
 
@@ -50,6 +57,15 @@ public:
 
 	sp<NdkThread> mNdkThread;
 	sp<NativeService> mNativeService;
+
+	sp<NdkTxThread> mNdkTxThread;
+	list<msg_t *> mNdkTxQueue;
+
+public:
+	void push_back(msg_t * item);
+	msg_t * pop_front();
+
+	bool empty();
 };
 
 
